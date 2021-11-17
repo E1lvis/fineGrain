@@ -50,10 +50,11 @@ std::vector<std::vector<std::string>> tokenizeLyrics(const std::vector<std::stri
 void doTheThing(std::vector<std::string>& filecontent, std::mutex& mut, int count){
 MyHashtable<std::string, int> ht;
 Dictionary<std::string, int>& dict = ht;
-      mut.lock();
-  int count = 0;
+      //mut.lock();
+//  int count = 0;
 for (auto & w : filecontent) {
-  count = ht.update(w, count);
+      mut.lock();
+	count = ht.update(w, count);
       ++count;
       ht.update(w, count);
       mut.unlock();
@@ -90,7 +91,7 @@ int main(int argc, char **argv)
 auto start =std::chrono::steady_clock::now();
   // write code here
   std::vector<std::thread> mythreads;
-
+	int count = 0;
   std::mutex mu;
 for (auto & filecontent: wordmap){
       std::thread mythread (doTheThing, std::ref(filecontent), std::ref(mu), count);
